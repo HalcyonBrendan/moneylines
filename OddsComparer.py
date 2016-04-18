@@ -1,180 +1,126 @@
 # from bs4 import BeautifulSoup
-from pyvirtualdisplay import Display
-import requests, re, time, smtplib, sys, datetime
-import email.message
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
+import re, time, sys, datetime, math
 from config import CONFIG as config
-import MySQLdb
+import HTML_parser
+import OddsEmailer
+import BettingDB
+import random
+import json
+
+def print_json(json_object):
+    print json.dumps(json_object, indent=4, sort_keys=True)
+    print "\n"
 
 class OddsComparer():
 
     def __init__(self):
-        self.betting_website_links = {}
-        self.db = MySQLdb.connect(passwd=config["mysql"]["pw"],host="localhost",
-            user="root", db="betting")
-        self.cursor = self.db.cursor()
-        self.display = Display(visible=0, size=(800, 600))
-        self.display.start()
-        # login to allow modification of roster
-        self.driver = webdriver.Firefox()
-        self.games = {"live": [], "upcoming": []}
-        self.timestamp = 0
+        self.parser = HTML_parser.HTML_parser()
+        self.bets_DB = BettingDB.BettingDB()
+        self.emailer = OddsEmailer.OddsEmailer()
+        self.games = {}
+        self.date = datetime.datetime.now()
 
-    def add_website(self,website):
-        self.betting_website_links[website["shorthand"]] = website["link"]
+        random.seed(int(time.time()))
 
-    def update_moneylines(self, shorthand):
-
-        link = self.betting_website_links[shorthand]
-
-        # access website
-        self.driver.get(link)
-
-        previous_length = 0
-        # scroll to make sure we reveal all the hidden games
+    def run(self):
+        # get the money lines for each website
         while True:
-            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            games = self.driver.find_elements_by_css_selector(
-                'article.gameline-layout.ng-scope.show-cta')
-            print "previous length was {0}, new length is {1}".format(
-                previous_length, len(games))
-            if len(games) == previous_length and len(games) != 0:
-                break
-            previous_length = len(games)
-            time.sleep(2)
 
-        self.timestamp= int(time.time())
-
-        for game in games:
-
-            names = game.find_elements_by_css_selector(
-                'header.event-shortnames')
-            moneyline = game.find_elements_by_css_selector('ul.ng-isolate-scope')[1]
-            moneyline = moneyline.find_elements_by_css_selector('span.ng-binding')
-            away_line = self.convert_line_to_int(moneyline[0].text.encode('utf-8'))
-            home_line = self.convert_line_to_int(moneyline[1].text.encode('utf-8'))
-        # print names[0]
-            name_objects = names[0].find_elements_by_css_selector('h4.ng-binding')
-            away_team = name_objects[0].text
-            home_team = name_objects[1].text
-
-            # determine if the game is live
-            live = game.find_elements_by_css_selector('span.live-event.ng-scope')
-            # find time value based on whether live or not
-            if len(live) > 0:
-                # try to get live time value
-                # failure met by showing that the time is 20:00 P1
-                try:
-                    game_time = game.find_element_by_css_selector(
-                        'time.ng-binding.ng-scope.ng-isolate-scope').text
-                except:
-                    game_time = "20:00 P1"
-
-                self.games["live"].append({"poll_time":self.timestamp,
-                    "home_team": home_team, "away_team": away_team,
-                    "game_time": game_time, "home_line": home_line,
-                    "away_line": away_line,
-                    "site": shorthand})                   
-            else:
-                game_time = game.find_element_by_css_selector(
-                    'time.ng-binding.ng-scope').text
-
-                self.games["upcoming"].append({"poll_time":self.timestamp, 
-                    "home_team": home_team, "away_team": away_team,
-                    "game_time": game_time, "home_line": home_line,
-                    "away_line": away_line,
-                    "site": shorthand})
-                
+            self.games = self.parser.get_moneylines()
+            results = []
 
 
-            print "{0}({3}) at {1}({4}), {2}".format(away_team, home_team, 
-                game_time, moneyline[0].text.encode('utf-8'), moneyline[1].text.encode('utf-8'))
+            # print_json(self.games)
 
-        # locate the proper fields (teams, start time, moneylines)
+            for sport in self.games:
+                for group in self.games[sport]:
+                    # check to see if game id exsists in
+                    # print game["game_time"]["day"]
+                    # print game["game_time"]["day"] is None
+                    # print site
+                    site = group["site"]
+                    for game in group["moneylines"]:
+                        # print_json(game)
+
+                        if game["game_time"]["day"] is not None:
+                            game_id = self.bets_DB.get_game_id(game)
+                            self.bets_DB.add_moneyline(game,game_id)
+
+                            betting_result = self.compare_moneylines(game_id,game)
+
+                            if betting_result:
+                                results.append(betting_result)
+
+                        else:
+                            self.bets_DB.delete_id(game)
+
+            if results:
+                self.emailer.send_email(results)
+
+            time_to_sleep = self.get_poisson_arrival_time(1/float(20*60))
+            print "sleeping {} seconds".format(time_to_sleep)
+            time.sleep(time_to_sleep)
 
 
-        # find all players in webpage
 
-        
-        # soup = BeautifulSoup(r.content,'html.parser')
-        # table = soup.find("table",{"class": "Tst-table Table"}).tbody
-        # players = table.findAll('tr')
+    def compare_moneylines(self, game_id, game):
+        # Look at current line
+        # determine if the underdog is the home team or the away team, same with favourite
 
-        self.driver.close()
-        self.display.stop()
+        # find lines with winning differences
+        # store line details
+        # return the best difference
 
-    def convert_line_to_int(self, line):
-        if "+" in line:
-            result = int(line[1:])
+        result = []
+
+        if game["home_line"] > game["away_line"]:
+            # the home team is the underdog and the away team is the favourite
+            favourite = "home"
+            underdog = "away"
+
         else:
-            result = int(line)
+            underdog = "away"
+            favourite = "home"
 
-        # print "input: {0}, output ({1}): {2}".format(line, type(result), result)
+        # betting on a team with +320 for 100 bucks and a team with -250 for 280
+        # then if the + team wins then you get +320 -280 = 40 and if - team wins you get 112 - 100 = 12
+
+        money_lines_to_compare = self.bets_DB.get_moneylines(game)
+
+        for money_line in money_lines_to_compare:
+            gametime_string = self.convert_timestamp_to_time_string(money_line["poll_time"])
+            
+            if money_line[favourite + "_line"] + game[underdog + "_line"] > 0:
+                result.append("should have bet on {0} at {1} and {2} now".format(game[favourite+"_team"],
+                    gametime_string, game[underdog+"_team"]))
+
+            elif money_line[underdog + "_line"] + game[favourite + "_line"] > 0:
+                result.append("should have bet on {0} at {1} and {2} now".format(game[underdog+"_team"],
+                    money_line["poll_time"],game[favourite+"_team"]))
+
+
         return result
 
-    def add_moneylines_to_database(self):
-
-        games_to_add = self.games["live"] + self.games["upcoming"]
-
-
-        for game in games_to_add:
-            # print type(game["home_line"])
-            # print type(game["away_line"])
-            self.cursor.execute("""INSERT INTO money_lines (poll_time, site, 
-    game_time, home_team, home_line, away_team, away_line) VALUES 
-    (%s,%s,%s, %s, %s, %s, %s)""",(game["poll_time"], game["site"],0,game["home_team"],
-        game["home_line"], game["away_team"], game["away_line"]))
-
-        self.db.commit()
-
-
-
     def flush_games(self):
-        self.games = {"live": [], "upcoming": []}
+        self.games = {"live": [], "upcoming": []}    
 
-    def convert_game_time_to_unix(self, time):
+    def convert_game_time_to_timestamp(self, time):
         pass
 
-    def send_email(self, notes_to_send):
-        print "Preparing email"
-        m = email.message.Message()
-        m['From'] = config["email"]["address"]
-        m['To'] = config["email"]["address"]
-        m['Subject'] = "Notable player transactions"
+    def convert_timestamp_to_time_string(self,timestamp):
+        game_datetime = datetime.datetime.fromtimestamp(timestamp)
+        game_string = str(game_datetime.day) + ":" + str(game_datetime.hour) + \
+            ":" + str(game_datetime.minute) + " (Day:Hour:Minute)"
 
-        my_payload = get_email_string(notes_to_send)
+        return game_string
 
-        m.set_payload(my_payload)
-
-        try:
-            # print("trying host and port...")
-
-            smtpObj = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-            smtpObj.login("alfred.e.kenny@gmail.com", config.CONFIG["email"]["app_pw"])
-
-            # print("sending mail...")
-
-            smtpObj.sendmail(config["email"]["address"], config["email"]["address"], m.as_string())
-
-            # print("Succesfully sent email")
-
-        except smtplib.SMTPException:
-            print("Error: unable to send email")
-            import traceback
-            traceback.print_exc()
-
+    def get_poisson_arrival_time(self, lambda_val):
+        return -1*math.log(max(0.0001,random.random()))/float(lambda_val)
 
 if __name__ == "__main__":
     odds = OddsComparer()
-    odds.add_website({"link":"https://sports.bodog.eu/hockey/nhl",
-        "shorthand": "bodog"})
-    odds.update_moneylines("bodog")
-    odds.add_moneylines_to_database()
-    odds.flush_games()
-    # print information
-    # store in db
-    # check against fake entry
-    # send email with odds
+    odds.run()
+    # odds.add_moneylines_to_database()
+    # odds.flush_games()
 
 
