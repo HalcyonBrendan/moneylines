@@ -39,7 +39,7 @@ class OddsComparer():
                     for game in group["moneylines"]:
                         # print game["game_time"]["day"]
                         # print game["game_time"]["day"] is None
-                        # print_json(game)
+                        print_json(game)
 
                         # print game["game_time"]["day"] != None
 

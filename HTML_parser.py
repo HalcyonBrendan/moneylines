@@ -1,4 +1,4 @@
-import time, datetime, pytz, re
+import time, datetime, pytz, re, sys
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from pyvirtualdisplay import Display
@@ -48,13 +48,23 @@ class HTML_parser():
                         'header.event-shortnames')
                     moneyline = game.find_elements_by_css_selector('ul.ng-isolate-scope')[1]
                     moneyline = moneyline.find_elements_by_css_selector('span.ng-binding')
-                    try:
-                        # this will fail if there are no lines yet
-                        away_line = self.convert_line_to_int(moneyline[0].text.encode('utf-8'))
-                        home_line = self.convert_line_to_int(moneyline[1].text.encode('utf-8'))
-                    except:
-                        print "No lines available yet"
-                        continue
+
+                    if type(moneyline[0].get_attribute("innerHTML") == unicode):
+                        try:
+                            # this will fail if there are no lines yet
+                            away_line = self.convert_line_to_int(moneyline[0].get_attribute("innerHTML"))
+                            home_line = self.convert_line_to_int(moneyline[1].get_attribute("innerHTML"))
+                        except:
+                            print "No lines available yet"
+                            continue
+                    else:
+                        try:
+                            # this will fail if there are no lines yet
+                            away_line = self.convert_line_to_int(moneyline[0].text.encode('utf-8'))
+                            home_line = self.convert_line_to_int(moneyline[1].text.encode('utf-8'))
+                        except:
+                            print "No lines available yet"
+                            continue
                 # print names[0]
                     name_objects = names[0].find_elements_by_css_selector('h4.ng-binding')
                     away_team = str(name_objects[0].text)
@@ -131,6 +141,12 @@ class HTML_parser():
         return games
 
     def convert_line_to_int(self, line):
+        if type(line) == unicode:
+            line = line.encode('utf-8')
+        elif type(line) != str:
+            print "invalid type for conversion"
+            return None
+
         if "+" in line:
             result = int(line[1:])
         else:
