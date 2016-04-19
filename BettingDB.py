@@ -55,14 +55,18 @@ class BettingDB():
 
         query_string = """SELECT id FROM game_ids 
             WHERE home_team = \'{0}\' 
-            AND away_team = \'{1}\' 
-            AND day = \'{2}\' 
+            AND away_team = \'{1}\'
             AND sport = \'{3}\'""".format(game["home_team"],
             game["away_team"],game["game_time"]["day"], game["sport"])
+
+        print "  > {}".format(query_string)
         self.cursor.execute(query_string)
         try:
             # attempts to get the result 
+
             result = self.cursor.fetchone()[0]
+
+            print result
 
         except:
             #if it fails, make a new id
@@ -118,4 +122,4 @@ class BettingDB():
 
         if game_id:          
             print "Deleting game with id {}".format(game_id)
-            self.cursor.execute("""DELETE FROM game_ids WHERE id = {0} AND sport = '{1}' """.format(game_id,game[sport]))
+            self.cursor.execute("""DELETE FROM game_ids WHERE id = {0} AND sport = '{1}' """.format(game_id,game["sport"]))

@@ -29,20 +29,21 @@ class OddsComparer():
             self.games = self.parser.get_moneylines()
             results = []
 
-
             # print_json(self.games)
 
             for sport in self.games:
                 for group in self.games[sport]:
                     # check to see if game id exsists in
-                    # print game["game_time"]["day"]
-                    # print game["game_time"]["day"] is None
-                    # print site
                     site = group["site"]
+                    print site
                     for game in group["moneylines"]:
-                        # print_json(game)
+                        # print game["game_time"]["day"]
+                        # print game["game_time"]["day"] is None
+                        print_json(game)
 
-                        if game["game_time"]["day"] is not None:
+                        print game["game_time"]["day"] != None
+
+                        if game["game_time"]["day"] != None:
                             game_id = self.bets_DB.get_game_id(game)
                             self.bets_DB.add_moneyline(game,game_id)
 
