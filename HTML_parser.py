@@ -53,6 +53,7 @@ class HTML_parser():
                         away_line = self.convert_line_to_int(moneyline[0].text.encode('utf-8'))
                         home_line = self.convert_line_to_int(moneyline[1].text.encode('utf-8'))
                     except:
+                        print "No lines available yet"
                         continue
                 # print names[0]
                     name_objects = names[0].find_elements_by_css_selector('h4.ng-binding')
