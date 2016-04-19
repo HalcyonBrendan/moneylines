@@ -10,6 +10,8 @@ class OddsEmailer():
 
         self.message = email.message.Message()
         self.smtpObj = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        self.smtpObj.ehlo()
+        # self.smtpObj.starttls()
         self.message['From'] = config["email"]["address"]
 
     def prepare_header(self, to_address):

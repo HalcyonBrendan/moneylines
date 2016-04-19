@@ -20,7 +20,7 @@ class BettingDB():
         query_string = """INSERT INTO {7}_lines (poll_time, id, site, home_team, home_line, away_team, away_line)
         VALUES ({0},{1},\'{2}\',\'{3}\',{4},\'{5}\',{6})""".format(line["poll_time"], game_id, line["site"],line["home_team"],
     line["home_line"], line["away_team"], line["away_line"], line["sport"])
-        # print query_string
+        print query_string
         self.cursor.execute(query_string)
 
         self.db.commit()
@@ -59,7 +59,7 @@ class BettingDB():
             AND sport = \'{3}\'""".format(game["home_team"],
             game["away_team"],game["game_time"]["day"], game["sport"])
 
-        print "  > {}".format(query_string)
+        # print "{}".format(query_string)
         self.cursor.execute(query_string)
         try:
             # attempts to get the result 
@@ -107,10 +107,14 @@ class BettingDB():
             new_id = largest_id + 1
         else:
             new_id = 1
-            
-        self.cursor.execute("""INSERT INTO game_ids (id,home_team,away_team,sport,day) VALUES\n
+        
+        query_string = """INSERT INTO game_ids (id,home_team,away_team,sport,day) VALUES\n
             ({0},\'{1}\',\'{2}\',\'{3}\',\'{4}\')""".format(new_id,game["home_team"],game["away_team"],
-            game["sport"],game["game_time"]["day"]))
+            game["sport"],game["game_time"]["day"])
+
+        self.cursor.execute(query_string)
+
+        print query_string
         
         self.db.commit()
 
@@ -120,6 +124,8 @@ class BettingDB():
         #only delete if game exists
         game_id = self.check_game_exists(game)
 
-        if game_id:          
-            print "Deleting game with id {}".format(game_id)
-            self.cursor.execute("""DELETE FROM game_ids WHERE id = {0} AND sport = '{1}' """.format(game_id,game["sport"]))
+        if game_id:    
+            query_string = """DELETE FROM game_ids WHERE id = {0} AND sport = '{1}' """.format(
+                game_id,game["sport"])      
+            print query_string
+            self.cursor.execute(query_string)

@@ -40,6 +40,8 @@ class HTML_parser():
                 # scroll to make sure we reveal all the hidden games
                 games = self.obtain_games()
 
+                print games
+
                 for game in games:
 
                     names = game.find_elements_by_css_selector(
