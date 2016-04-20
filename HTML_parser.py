@@ -40,7 +40,7 @@ class HTML_parser():
                 # scroll to make sure we reveal all the hidden games
                 games = self.obtain_games()
 
-                print games
+                # print games
 
                 for game in games:
 
@@ -69,6 +69,8 @@ class HTML_parser():
                     name_objects = names[0].find_elements_by_css_selector('h4.ng-binding')
                     away_team = str(name_objects[0].text)
                     home_team = str(name_objects[1].text)
+
+                    print "{0} {1} {2} {3}".format(home_team, home_line, away_team, wait_line)
 
                     # determine if the game is live
                     live = game.find_elements_by_css_selector('span.live-event.ng-scope')

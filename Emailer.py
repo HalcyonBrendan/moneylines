@@ -4,7 +4,7 @@ import smtplib
 import traceback
 from config import CONFIG as config
 
-class OddsEmailer():
+class Emailer():
 
     def __init__(self):
 

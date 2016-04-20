@@ -2,7 +2,7 @@
 import re, time, sys, datetime, math
 from config import CONFIG as config
 import HTML_parser
-import OddsEmailer
+import Emailer
 import BettingDB
 import random
 import json
@@ -16,7 +16,7 @@ class OddsComparer():
     def __init__(self):
         self.parser = HTML_parser.HTML_parser()
         self.bets_DB = BettingDB.BettingDB()
-        self.emailer = OddsEmailer.OddsEmailer()
+        self.emailer = Emailer.Emailer()
         self.games = {}
         self.date = datetime.datetime.now()
 
