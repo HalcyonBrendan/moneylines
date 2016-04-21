@@ -110,8 +110,8 @@ class BettingDB():
         else:
             new_id = 1
         
-        query_string = """INSERT INTO game_ids (id,home_team,away_team,sport,day)\n
-    VALUES ({0},\'{1}\',\'{2}\',\'{3}\',\'{4}\')""".format(new_id,game["home_team"],game["away_team"],
+        query_string = """INSERT INTO game_ids (id,home_team,away_team,sport,day)
+VALUES ({0},\'{1}\',\'{2}\',\'{3}\',\'{4}\')""".format(new_id,game["home_team"],game["away_team"],
             game["sport"],game["game_time"]["day"])
 
         self.cursor.execute(query_string)
