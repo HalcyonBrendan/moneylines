@@ -9,9 +9,6 @@ class Emailer():
     def __init__(self):
 
         self.message = email.message.Message()
-        self.smtpObj = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        self.smtpObj.ehlo()
-        # self.smtpObj.starttls()
         self.message['From'] = config["email"]["address"]
 
     def prepare_header(self, to_address):
@@ -23,7 +20,13 @@ class Emailer():
 
         self.message.set_payload(my_payload)
 
+    def connect(self):
+        self.smtpObj = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        self.smtpObj.ehlo()
+
     def send_email(self, notes):
+
+        self.connect()
 
         self.prepare_header(config["email"]["address"])
         self.add_payload(notes)
@@ -48,6 +51,8 @@ class Emailer():
         except:
             print("Error: unable to log in to account")
             traceback.print_exc()
+
+        self.smtpObj.quit()
 
     def get_email_string(self, notes):
         result = ""
