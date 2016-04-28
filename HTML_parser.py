@@ -67,12 +67,12 @@ class HTML_parser():
 						except:
 							print "No lines available yet"
 							continue
-					print "{0} {1}".format(home_line, away_line)
+					# print "{0} {1}".format(home_line, away_line)
 					name_objects = names[0].find_elements_by_css_selector('h4.ng-binding')
 					away_team = str(name_objects[0].text)
 					home_team = str(name_objects[1].text)
 
-					print "{0} {1} {2} {3}".format(home_team, home_line, away_team, away_line)
+					# print "{0} {1} {2} {3}".format(home_team, home_line, away_team, away_line)
 
 					# determine if the game is live
 					live = game.find_elements_by_css_selector('span.live-event.ng-scope')

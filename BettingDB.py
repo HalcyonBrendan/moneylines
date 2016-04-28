@@ -11,7 +11,7 @@ class BettingDB():
         self.cursor = self.db.cursor()
         self.date = datetime.datetime.now()
 
-    def execute_command(self, command):
+    def execute_command(self, query_string):
         print query_string
         self.cursor.execute(query_string)
 
@@ -61,8 +61,8 @@ home_team TEXT, home_line INT, away_team TEXT, away_line INT)""".format(sport)
             return False
 
     def create_ids_table(self):
-        query_string = """CREATE TABLE game_ids (id INT, home_team TEXT, away_team TEXT, sport TEXT)"""
-        print query_string
+        query_string = """CREATE TABLE game_ids (id INT, day TEXT, home_team TEXT, away_team TEXT, sport TEXT)"""
+        # print query_string
         self.execute_command(query_string)
 
 
@@ -146,8 +146,12 @@ home_team TEXT, home_line INT, away_team TEXT, away_line INT)""".format(sport)
             print "game_ids table does not exist"
             self.create_ids_table()
 
-        print "Making new id"
 
+        if not self.lines_table_exists(game["sport"]):
+            print "{}_lines table does not exist".format(game["sport"])
+            self.create_moneyline_table(game["sport"])
+
+        print "Making new id"
 
         self.cursor.execute("""SELECT MAX(id) AS id FROM {}_lines""".format(game["sport"]))
         largest_id = self.cursor.fetchone()[0]
@@ -165,7 +169,7 @@ VALUES ({0},\'{1}\',\'{2}\',\'{3}\',\'{4}\')""".format(new_id,game["home_team"],
 
         self.cursor.execute(query_string)
 
-        print query_string
+        # print query_string
         
         self.db.commit()
 
@@ -175,10 +179,10 @@ VALUES ({0},\'{1}\',\'{2}\',\'{3}\',\'{4}\')""".format(new_id,game["home_team"],
         #only delete if game exists
         game_id = self.check_game_exists(game)
 
-        print "Deleting id"
 
         if game_id:    
+            print "Deleting id"
             query_string = """DELETE FROM game_ids WHERE id = {0} AND sport = '{1}' """.format(
                 game_id,game["sport"])      
-            print query_string
+            # print query_string
             self.cursor.execute(query_string)
