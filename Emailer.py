@@ -57,8 +57,7 @@ class Emailer():
     def get_email_string(self, notes):
         result = ""
 
-        for game_notes in notes:
-            for note in game_notes:
-                result += "{}\n".format(note)
+        for game_note in notes:
+            result += "{}\n".format(game_note)
 
         return result
