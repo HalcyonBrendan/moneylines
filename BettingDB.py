@@ -12,7 +12,7 @@ class BettingDB():
         self.date = datetime.datetime.now()
 
     def execute_command(self, query_string):
-        print query_string
+        print "{}\n\n".format(query_string)
         self.cursor.execute(query_string)
 
         self.db.commit()
@@ -39,7 +39,7 @@ class BettingDB():
     def create_moneyline_table(self,sport):
         query_string = """CREATE TABLE {}_lines (poll_time INT, id INT, site TEXT, 
 home_team TEXT, home_line INT, away_team TEXT, away_line INT)""".format(sport)
-        print query_string
+        # print query_string
         self.execute_command(query_string)
 
     def lines_table_exists(self, sport):

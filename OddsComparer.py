@@ -58,11 +58,16 @@ class OddsComparer():
             if results:
                 self.emailer.send_email(results)
 
-            time_to_sleep = self.get_poisson_arrival_time(1/float(20*60))
+            time_to_sleep = int(self.get_poisson_arrival_time(1/float(20*60)))
             print "sleeping {} seconds".format(time_to_sleep)
-            time.sleep(time_to_sleep)
+            self.countdown_sleep(time_to_sleep)
 
-
+    def countdown_sleep(self, time_to_sleep):
+        for i in range(time_to_sleep):
+            sys.stdout.write('\r')
+            sys.stdout.write(str(time_to_sleep - i))
+            sys.stdout.flush()
+            time.sleep(1) 
 
     def compare_moneylines(self, game_id, game):
         # Look at current line
