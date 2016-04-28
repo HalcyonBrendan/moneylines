@@ -43,18 +43,18 @@ home_team TEXT, home_line INT, away_team TEXT, away_line INT)""".format(sport)
         self.execute_command(query_string)
 
     def lines_table_exists(self, sport):
-        stmt = "SHOW TABLES LIKE {}_lines".format(sport)
-        cursor.execute(stmt)
-        result = cursor.fetchone()
+        stmt = "SHOW TABLES LIKE \'{}_lines\'".format(sport)
+        self.cursor.execute(stmt)
+        result = self.cursor.fetchone()
         if result:
             return True
         else:
             return False
 
     def ids_table_exists(self):
-        stmt = "SHOW TABLES LIKE game_ids"
-        cursor.execute(stmt)
-        result = cursor.fetchone()
+        stmt = "SHOW TABLES LIKE \'game_ids\'"
+        self.cursor.execute(stmt)
+        result = self.cursor.fetchone()
         if result:
             return True
         else:

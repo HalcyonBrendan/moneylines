@@ -46,10 +46,10 @@ class HTML_parser():
 
 					names = game.find_elements_by_css_selector(
 						'header.event-shortnames')
-					print "names: {}".format(names)
+					#print "names: {}".format(names)
 					moneyline = game.find_elements_by_css_selector('ul.ng-isolate-scope')[1]
 					moneyline = moneyline.find_elements_by_css_selector('span.ng-binding')
-					print "moneyline: {}".format(moneyline)
+					#print "moneyline: {}".format(moneyline)
 
 					if type(moneyline[0].get_attribute("innerHTML") == unicode):
 						try:
