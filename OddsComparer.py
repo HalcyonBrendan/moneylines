@@ -77,7 +77,7 @@ class OddsComparer():
         # store line details
         # return the best difference
 
-        result = []
+        result = None
 
         if game["home_line"] > game["away_line"]:
             # the home team is the underdog and the away team is the favourite
@@ -93,16 +93,31 @@ class OddsComparer():
 
         money_lines_to_compare = self.bets_DB.get_moneylines(game)
 
+        betting_max = {"now_team": None, "before_team": None, "date": None, "diff": 0}
+
         for money_line in money_lines_to_compare:
             gametime_string = self.convert_timestamp_to_time_string(money_line["poll_time"])
             
-            if money_line[favourite + "_line"] + game[underdog + "_line"] > 0:
+            if money_line[favourite + "_line"] + game[underdog + "_line"] > betting_max["diff"]:
+                betting_max["diff"] = money_line[favourite + "_line"] + game[underdog + "_line"]
+                betting_max["now_team"] = game[underdog+"_team"]
+                betting_max["before_team"] = game[favourite+"_team"]
+                betting_max["date"] = gametime_string
+
                 result.append("should have bet on {0} at {1} and {2} now".format(game[favourite+"_team"],
                     gametime_string, game[underdog+"_team"]))
 
-            elif money_line[underdog + "_line"] + game[favourite + "_line"] > 0:
-                result.append("should have bet on {0} at {1} and {2} now".format(game[underdog+"_team"],
-                    money_line["poll_time"],game[favourite+"_team"]))
+            elif money_line[underdog + "_line"] + game[favourite + "_line"] > betting_max["diff"]:
+
+                betting_max["diff"] = money_line[underdog + "_line"] + game[favourite + "_line"]
+                betting_max["now_team"] = game[favourite+"_team"]
+                betting_max["before_team"] = game[underdog+"_team"]
+                betting_max["date"] = gametime_string
+
+        if betting_max["diff"] > 0:
+            result = "We should have bet on {0} at {1} and {2} now for a difference of {3} points".format(
+                betting_max["before_team"],betting_max["date"], betting_max["now_team"],betting_max["diff"])
+
 
 
         return result
