@@ -51,22 +51,28 @@ class HTML_parser():
 					moneyline = moneyline.find_elements_by_css_selector('span.ng-binding')
 					#print "moneyline: {}".format(moneyline)
 
-					if type(moneyline[0].get_attribute("innerHTML") == unicode):
-						try:
-							# this will fail if there are no lines yet
-							away_line = self.convert_line_to_int(moneyline[0].get_attribute("innerHTML"))
-							home_line = self.convert_line_to_int(moneyline[1].get_attribute("innerHTML"))
-						except:
-							print "No lines available yet"
-							continue
-					else:
-						try:
-							# this will fail if there are no lines yet
-							away_line = self.convert_line_to_int(moneyline[0].text.encode('utf-8'))
-							home_line = self.convert_line_to_int(moneyline[1].text.encode('utf-8'))
-						except:
-							print "No lines available yet"
-							continue
+					try:
+
+						if type(moneyline[0].get_attribute("innerHTML") == unicode):
+							try:
+								# this will fail if there are no lines yet
+								away_line = self.convert_line_to_int(moneyline[0].get_attribute("innerHTML"))
+								home_line = self.convert_line_to_int(moneyline[1].get_attribute("innerHTML"))
+							except:
+								print "No lines available yet"
+								continue
+						else:
+							try:
+								# this will fail if there are no lines yet
+								away_line = self.convert_line_to_int(moneyline[0].text.encode('utf-8'))
+								home_line = self.convert_line_to_int(moneyline[1].text.encode('utf-8'))
+							except:
+								print "No lines available yet"
+								continue
+
+					except:
+						print "Error with line"
+						continue
 					# print "{0} {1}".format(home_line, away_line)
 					name_objects = names[0].find_elements_by_css_selector('h4.ng-binding')
 					away_team = str(name_objects[0].text)
