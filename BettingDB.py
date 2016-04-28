@@ -11,21 +11,60 @@ class BettingDB():
         self.cursor = self.db.cursor()
         self.date = datetime.datetime.now()
 
-    def add_moneyline(self, line, game_id):
-        # print type(game["home_line"])
-        # print type(game["away_line"])
-
-        print "Adding moneyline"
-
-        game_id = self.get_game_id(line)
-
-        query_string = """INSERT INTO {7}_lines (poll_time, id, site, home_team, home_line, away_team, away_line)
-    VALUES ({0},{1},\'{2}\',\'{3}\',{4},\'{5}\',{6})""".format(line["poll_time"], game_id, line["site"],line["home_team"],
-    line["home_line"], line["away_team"], line["away_line"], line["sport"])
+    def execute_command(self, command):
         print query_string
         self.cursor.execute(query_string)
 
         self.db.commit()
+
+
+    def add_moneyline(self, line, game_id):
+        # print type(game["home_line"])
+        # print type(game["away_line"])
+
+        if not self.lines_table_exists(line["sport"]):
+            # if table does not exist
+            print "{}_lines does not exist".format(line[sport])
+            self.create_moneyline_table(line["sport"])
+
+        print "Adding moneyline"
+
+        line["id"] = self.get_game_id(line)
+
+        query_string = """INSERT INTO {7}_lines (poll_time, id, site, home_team, home_line, away_team, away_line)
+    VALUES ({0},{1},\'{2}\',\'{3}\',{4},\'{5}\',{6})""".format(line["poll_time"], line["id"], line["site"],line["home_team"],
+    line["home_line"], line["away_team"], line["away_line"], line["sport"])
+        self.execute_command(query_string)
+
+    def create_moneyline_table(self,sport):
+        query_string = """CREATE TABLE {}_lines (poll_time INT, id INT, site TEXT, 
+home_team TEXT, home_line INT, away_team TEXT, away_line INT)""".format(sport)
+        print query_string
+        self.execute_command(query_string)
+
+    def lines_table_exists(self, sport):
+        stmt = "SHOW TABLES LIKE {}_lines".format(sport)
+        cursor.execute(stmt)
+        result = cursor.fetchone()
+        if result:
+            return True
+        else:
+            return False
+
+    def ids_table_exists(self):
+        stmt = "SHOW TABLES LIKE game_ids"
+        cursor.execute(stmt)
+        result = cursor.fetchone()
+        if result:
+            return True
+        else:
+            return False
+
+    def create_ids_table(self):
+        query_string = """CREATE TABLE game_ids (id INT, home_team TEXT, away_team TEXT, sport TEXT)"""
+        print query_string
+        self.execute_command(query_string)
+
 
     def get_moneylines(self, game):
 
@@ -53,7 +92,9 @@ class BettingDB():
 
     def check_game_exists(self,game):
 
-        # add sport
+        if not self.ids_table_exists():
+            print "game_ids table does not exist"
+            self.create_ids_table()
 
         query_string = """SELECT id FROM game_ids 
             WHERE home_team = \'{0}\' 
@@ -79,6 +120,10 @@ class BettingDB():
     def get_game_id(self, game):
         # we can assume that all the games in the id database are in the next 2 days
 
+        if not self.ids_table_exists():
+            print "game_ids table does not exist"
+            self.create_ids_table()
+
         query_string = """SELECT id FROM game_ids 
             WHERE home_team = \'{0}\' 
             AND away_team = \'{1}\' 
@@ -96,6 +141,10 @@ class BettingDB():
         return result
 
     def add_id(self,game):
+        
+        if not self.ids_table_exists():
+            print "game_ids table does not exist"
+            self.create_ids_table()
 
         print "Making new id"
 
