@@ -104,9 +104,6 @@ class OddsComparer():
                 betting_max["before_team"] = game[favourite+"_team"]
                 betting_max["date"] = gametime_string
 
-                result.append("should have bet on {0} at {1} and {2} now".format(game[favourite+"_team"],
-                    gametime_string, game[underdog+"_team"]))
-
             elif money_line[underdog + "_line"] + game[favourite + "_line"] > betting_max["diff"]:
 
                 betting_max["diff"] = money_line[underdog + "_line"] + game[favourite + "_line"]
