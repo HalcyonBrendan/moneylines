@@ -10,6 +10,7 @@ class Emailer():
 
         self.message = email.message.Message()
         self.message['From'] = config["email"]["address"]
+        self.prepare_header(config["email"]["address"])
 
     def prepare_header(self, to_address):
         self.message['To'] = to_address
@@ -28,7 +29,7 @@ class Emailer():
 
         self.connect()
 
-        self.prepare_header(config["email"]["address"])
+        # self.prepare_header(config["email"]["address"])
         self.add_payload(notes)
 
         try:
