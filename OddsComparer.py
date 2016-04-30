@@ -55,8 +55,8 @@ class OddsComparer():
                         else:
                             self.bets_DB.delete_id(game)
 
-            if results:
-                self.emailer.send_email(results)
+            # if results:
+            #     self.emailer.send_email(results)
 
             time_to_sleep = int(self.get_poisson_arrival_time(1/float(20*60)))
             print "sleeping {} seconds".format(time_to_sleep)
