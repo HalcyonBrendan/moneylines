@@ -17,16 +17,14 @@ def print_json(json_object):
 class FiveDimesParser():
 
     def __init__(self, driver):
-        self.sports_translations = {"hockey": "Hockey_NHL", 
-                                    "baseball": "Baseball_MLB",
-                                    "basketball": "Basketball_NBA"
-                                   }
+        self.sports_translations = config["sports_translations"]
         self.driver = driver
         self.acceptable_delay = 10 #s
-        self.driver.get('http://www.5dimes.eu/sportsbook.html')
-        self.login()
 
     def login(self):
+
+        self.driver.get('http://www.5dimes.eu/sportsbook.html')
+
         username = self.driver.find_element_by_name('customerID')
         password = self.driver.find_element_by_name('password')
 
@@ -34,15 +32,26 @@ class FiveDimesParser():
         password.send_keys("5tUdmaster")
         password.send_keys(Keys.RETURN)
 
+    def logout(self):
+
+        link = self.driver.find_element_by_link_text('sign out')
+        link.click()
+
     def get_moneylines(self, sports):
+
+        self.login()
+
+        moneylines = []
+
         for sport in sports:
+            # print sport, sports
             if sport in self.sports_translations.keys():
                 try:
-                    print self.sports_translations[sport]
+                    # print self.sports_translations[sport]
                     WebDriverWait(self.driver, self.acceptable_delay).until(
                         EC.presence_of_element_located((By.NAME, self.sports_translations[sport])))
                         # self.driver.find_element_by_id(self.sports_translations[sport])))
-                    print "Page is ready!"
+                    # print "Page is ready!"
                 except TimeoutException:
                     print "Loading took too much time!"
 
@@ -53,11 +62,11 @@ class FiveDimesParser():
                 self.driver.find_element_by_id('btnContinue').click()
 
                 try:
-                    print self.sports_translations[sport]
+                    # print self.sports_translations[sport]
                     WebDriverWait(self.driver, self.acceptable_delay).until(
                         EC.presence_of_element_located((By.ID, 'tblBaseballMLBGame')))
                         # self.driver.find_element_by_id(self.sports_translations[sport])))
-                    print "Page is ready!"
+                    # print "Page is ready!"
                 except TimeoutException:
                     print "Loading took too much time!"
 
@@ -65,22 +74,20 @@ class FiveDimesParser():
 
                 # print soup
 
-                away_teams = soup.findAll("tr", { "class" : "linesRow" })
-                home_teams = soup.findAll("tr", { "class" : "linesRowBot" })
+                away_cells = soup.findAll("tr", { "class" : "linesRow" })
+                home_cells = soup.findAll("tr", { "class" : "linesRowBot" })
 
-                # print away_teams[0]
 
-                game_lines = []
+                for i in range(len(away_cells)):
 
-                for i in range(len(away_teams)):
-                    game_lines.append({})
+                    lines_for_this_game = {}
 
-                    game_lines[i]["sport"] = sport
-                    game_lines[i]["site"] = "5Dimes"
+                    elements = away_cells[i].findAll('td')
 
-                    elements = away_teams[i].findAll('td')
-
-                    game_lines[i]["game_time"] = str(re.split(" ",elements[0].getText())[0])
+                    game_time = {
+                        "day": str(re.split(" ",elements[0].getText())[0]).upper(),
+                        "time": ""
+                    }
 
                     away_list = re.split("\W+",elements[2].getText().replace(u'\xa0', u' '))[1:]
                     away_string = []
@@ -92,11 +99,13 @@ class FiveDimesParser():
                         else:
                             break
                     
-                    game_lines[i]["away_team"] = self.translate_name(" ".join(away_string), sport)
+                    away_team = self.translate_name(" ".join(away_string), sport)
 
-                    game_lines[i]["away_line"] = re.split(' ',str(elements[4].getText().replace(u'\xa0', u'')))[0]
+                    away_line = int(re.split(' ',str(elements[4].getText().replace(u'\xa0', u'')))[0])
 
-                    elements = home_teams[i].findAll('td')
+                    elements = home_cells[i].findAll('td')
+
+                    game_time["time"] = str(re.split(" ",elements[0].getText())[0]).lower()
 
                     home_list = re.split("\W+",elements[2].getText().replace(u'\xa0', u' '))[1:]
                     home_string = []
@@ -108,42 +117,62 @@ class FiveDimesParser():
                         else:
                             break
                     
-                    game_lines[i]["home_team"] = self.translate_name(" ".join(home_string), sport)
+                    home_team = self.translate_name(" ".join(home_string), sport)
 
-                    game_lines[i]["home_line"] = re.split(' ',str(elements[4].getText().replace(u'\xa0', u'')))[0]
+                    home_line = int(re.split(' ',str(elements[4].getText().replace(u'\xa0', u'')))[0])
 
-
-                 
-
-                    # for i in range(len(away_list)):
-                    #     if len(away_list[i]) < 3:
-                    #         away_list = away_list[:i]
-                    #         break
-                    
-                    # game_lines[i]["away_team"] = " ".join(away_list)
-
-                # away_teams = self.driver.find_element_by_class_name('linesRow')
-                # home_teams = self.driver.find_element_by_class_name('linesRowBottom')
-
-                # for i in range(len(away_teams)):
-                #     away_teams[i] = away_teams[i].
-
+                    moneylines.append(
+                    {
+                        "home_team": home_team, 
+                        "away_team": away_team,
+                        "game_time": game_time, 
+                        "home_line": home_line, 
+                        "away_line": away_line,
+                        "sport":sport
+                    }
+                )
             else:
                 "{} not yet available for 5Dimes".format(sport)
 
-            sleep(5)
             self.driver.execute_script("window.history.go(-1)")
+
+            try:
+                # print self.sports_translations[sport]
+                WebDriverWait(self.driver, self.acceptable_delay).until(
+                    EC.presence_of_element_located((By.NAME, self.sports_translations[sport])))
+                    # self.driver.find_element_by_id(self.sports_translations[sport])))
+                # print "Page is ready!"
+            except TimeoutException:
+                print "Loading took too much time!"
+
             self.driver.find_element_by_name(self.sports_translations[sport]).click() # unclick
 
-            return game_lines
+        try:
+            self.logout()
+        except:
+            pass
+
+        return {"site": "5Dimes", "moneylines": moneylines}
 
     def translate_name(self, long_form, sport):
-        print long_form
+        # print long_form
         for short_form in config["short_names"][sport]:
             if long_form in config["short_names"][sport][short_form]:
                 return short_form
 
+        return long_form
+
 if __name__ == "__main__":
-    parser = FiveDimesParser(webdriver.Firefox())
+    display = Display(visible=0, size=(800, 600))
+    display.start()
+    driver = webdriver.Firefox()
+    parser = FiveDimesParser(driver)
     sports = ['baseball']
-    print_json(parser.get_moneylines(sports))
+    results = parser.get_moneylines(sports)
+
+    # for result in results:
+    #     if failure_string in results:
+    #         print_json(result)
+    print_json(results)
+
+    driver.close()
