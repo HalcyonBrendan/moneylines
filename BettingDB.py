@@ -61,7 +61,7 @@ home_team TEXT, home_line INT, away_team TEXT, away_line INT)""".format(sport)
             return False
 
     def create_ids_table(self):
-        query_string = """CREATE TABLE game_ids (id INT, day TEXT, home_team TEXT, away_team TEXT, sport TEXT)"""
+        query_string = """CREATE TABLE game_ids (id INT, day TEXT, time TEXT, home_team TEXT, away_team TEXT, sport TEXT)"""
         # print query_string
         self.execute_command(query_string)
 
@@ -99,8 +99,10 @@ home_team TEXT, home_line INT, away_team TEXT, away_line INT)""".format(sport)
         query_string = """SELECT id FROM game_ids 
             WHERE home_team = \'{0}\' 
             AND away_team = \'{1}\'
-            AND sport = \'{3}\'""".format(game["home_team"],
-            game["away_team"],game["game_time"]["day"], game["sport"])
+            AND day = \'{2}\'
+            AND time = \'{3}\'
+            AND sport = \'{4}\'""".format(game["home_team"],
+            game["away_team"],game["game_time"]["day"],game["game_time"]["time"] , game["sport"])
 
         # print "{}".format(query_string)
         self.cursor.execute(query_string)
@@ -126,10 +128,12 @@ home_team TEXT, home_line INT, away_team TEXT, away_line INT)""".format(sport)
 
         query_string = """SELECT id FROM game_ids 
             WHERE home_team = \'{0}\' 
-            AND away_team = \'{1}\' 
-            AND day = \'{2}\' 
-            AND sport = '{3}'""".format(game["home_team"],
-            game["away_team"],game["game_time"]["day"], game["sport"])
+            AND away_team = \'{1}\'
+            AND day = \'{2}\'
+            AND time = \'{3}\'
+            AND sport = \'{4}\'""".format(game["home_team"],
+            game["away_team"],game["game_time"]["day"],game["game_time"]["time"] , game["sport"])
+            
         self.cursor.execute(query_string)
         try:
             # attempts to get the result 
