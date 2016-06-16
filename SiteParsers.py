@@ -57,8 +57,18 @@ class bodog():
                 moneyline_cells = cell.findAll('ul', {'class': "ng-isolate-scope"})[1]
                 lines = moneyline_cells.findAll('span', {'class': 'ng-binding'})
 
-                away_line = int(str((lines[0].getText())))
-                home_line = int(str((lines[1].getText())))
+                away_line_string = str((lines[0].getText()))
+                home_line_string = str((lines[1].getText()))
+
+                if "EVEN" in away_line_string:
+                    away_line = 100
+                else:
+                    away_line = int(away_line_string)
+                
+                if "EVEN" in home_line_string:
+                    home_line = 100
+                else:
+                    home_line = int(home_line_string)
 
                 moneylines.append(
                     {
@@ -76,6 +86,7 @@ class bodog():
     def scroll(self):
 
         previous_length = 0
+        first_scroll = True
 
         while True:
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -83,9 +94,10 @@ class bodog():
                 'article.gameline-layout.ng-scope.show-cta')
             print "previous length was {0}, new length is {1}".format(
                 previous_length, len(games))
-            if len(games) == previous_length and len(games) != 0:
+            if (len(games) == previous_length) and (len(games) != 0 or not first_scroll):
                 break
             previous_length = len(games)
+            first_scroll = False
             time.sleep(2)
 
     def translate_name(self, long_form, sport):
@@ -160,8 +172,11 @@ class FiveDimes():
 
                 self.class_print("selecting {}".format(sport))
                 # self.driver.find_element_by_name(self.sports_translations[sport]).click()
-                self.driver.find_element_by_name(self.sports_translations[sport]).click()
-                self.driver.find_element_by_id('btnContinue').click()
+                try:
+                    self.driver.find_element_by_name(self.sports_translations[sport]).click()
+                    self.driver.find_element_by_id('btnContinue').click()
+                except:
+                    continue
 
                 try:
                     # print self.sports_translations[sport]

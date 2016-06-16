@@ -31,29 +31,38 @@ class OddsComparer():
 
             # print_json(self.games)
 
-            for sport in self.games:
-                for group in self.games[sport]:
-                    # check to see if game id exsists in
-                    site = group["site"]
-                    # print site
-                    for game in group["moneylines"]:
-                        # print game["game_time"]["day"]
-                        # print game["game_time"]["day"] is None
-                        # print_json(game)
+            # for sport in self.games:
+            for group in self.games:
+                # check to see if game id exsists in
+                site = group["site"]
+                # print site
+                for game in group["moneylines"]:
 
-                        # print game["game_time"]["day"] != None
+                    """
+                    your code for what to do with the lines goes here.
+                    standard format for lines is a dictionary like so:
+                    game = {
+                        "home_team": home team's short name, 
+                        "away_team": away team's short name,
+                        "game_time": game time (miiiiight not be standardized), 
+                        "home_line": home team's line, 
+                        "away_line": away team's line,
+                        "sport": name of the sport
+                    }
+                    """
 
-                        if game["status"] == "upcoming":
-                            game_id = self.bets_DB.get_game_id(game)
-                            self.bets_DB.add_moneyline(game,game_id)
 
-                            betting_result = self.compare_moneylines(game_id,game)
+                    # if game["status"] == "upcoming":
+                    #     game_id = self.bets_DB.get_game_id(game)
+                    #     self.bets_DB.add_moneyline(game,game_id)
 
-                            if betting_result:
-                                results.append(betting_result)
+                    #     betting_result = self.compare_moneylines(game_id,game)
 
-                        else:
-                            self.bets_DB.delete_id(game)
+                    #     if betting_result:
+                    #         results.append(betting_result)
+
+                    # else:
+                    #     self.bets_DB.delete_id(game)
 
             # if results:
             #     self.emailer.send_email(results)
