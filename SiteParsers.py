@@ -126,8 +126,8 @@ class FiveDimes():
         username = self.driver.find_element_by_name('customerID')
         password = self.driver.find_element_by_name('password')
 
-        username.send_keys("5D2294959")
-        password.send_keys("5tUdmaster")
+        username.send_keys(config["passwords"]["FiveDimes"]["username"])
+        password.send_keys(config["passwords"]["FiveDimes"]["password"])
         self.class_print("logging in")
         password.send_keys(Keys.RETURN)
 
@@ -166,7 +166,7 @@ class FiveDimes():
                 try:
                     # print self.sports_translations[sport]
                     WebDriverWait(self.driver, self.acceptable_delay).until(
-                        EC.presence_of_element_located((By.ID, 'tblBaseballMLBGame')))
+                        EC.presence_of_element_located((By.ID, "tbl{}Game".format(config["tablenames"][sport]))))
                         # self.driver.find_element_by_id(self.sports_translations[sport])))
                     # print "Page is ready!"
                 except TimeoutException:
@@ -174,7 +174,7 @@ class FiveDimes():
 
 
                 soup = BeautifulSoup(self.driver.page_source, "html.parser")
-                soup = soup.findAll("table", {"id": "tblHockeyNHLGame"})[0]
+                soup = soup.findAll("table", {"id": "tbl{}Game".format(config["tablenames"][sport])})[0]
                 self.class_print("moneylines page loaded")
                 self.class_print("obtaining moneylines")
                 # print soup
@@ -283,6 +283,14 @@ class FiveDimes():
 
 
 
+
+
+
+
+
+
+
+
 class Pinnacle():
 
     def __init__(self,driver):
@@ -376,24 +384,31 @@ class Pinnacle():
 
     def time_zone_change(self, my_time):
         float_time = float(my_time) + 3
+        return float_time
 
-        if float_time >= 13:
-            float_time -= 12
-            if float_time >= 10:
-                return "{0:5.2f}p".format(float_time)
-            else:
-                return "{0:4.2f}p".format(float_time)
-        elif float_time >= 12:
-            return "{0:5.2f}p".format(float_time)
-        elif float_time < 1:
-            return "{0:5.2f}a".format(float_time + 12)
-        elif float_time >= 10:
-            return "{0:5.2f}a".format(float_time)
-        else:
-            return "{0:4.2f}a".format(float_time)
+        # if float_time >= 13:
+        #     float_time -= 12
+        #     if float_time >= 10:
+        #         return "{0:5.2f}p".format(float_time)
+        #     else:
+        #         return "{0:4.2f}p".format(float_time)
+        # elif float_time >= 12:
+        #     return "{0:5.2f}p".format(float_time)
+        # elif float_time < 1:
+        #     return "{0:5.2f}a".format(float_time + 12)
+        # elif float_time >= 10:
+        #     return "{0:5.2f}a".format(float_time)
+        # else:
+        #     return "{0:4.2f}a".format(float_time)
 
     def class_print(self, string):
         print "{0}: {1}".format(self.name, string)
+
+
+
+
+
+
 
 if __name__ == "__main__":
     display = Display(visible=0, size=(800, 600))

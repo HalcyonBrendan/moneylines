@@ -26,7 +26,8 @@ class HTML_parser():
 
 	def load_parsers(self):
 		self.parsers["bodog"] = SiteParsers.bodog(self.driver)
-		self.parsers["FiveDimes"] = SiteParsers.FiveDimes(self.driver)		 
+		self.parsers["FiveDimes"] = SiteParsers.FiveDimes(self.driver)
+		self.parsers["Pinnacle"] = SiteParsers.Pinnacle(self.driver)	 
 
 	def get_moneylines(self):
 
