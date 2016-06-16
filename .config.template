@@ -1,0 +1,324 @@
+{
+    "email": {
+        "address": "your gmail",
+        "app_pw": "your gmail app pw"
+    },
+    "mysql": {
+        "username": "root",
+        "pw": "your server pw"
+    },
+    "passwords": {
+        "FiveDimes": {
+            "username": "your id",
+            "password": "your pw"
+        }
+    },
+    "bookies": [
+        "bodog",
+        "FiveDimes",
+        "Pinnacle"
+    ],
+    "sports": [
+        "hockey",
+        "baseball"
+    ],
+    "sport_webpages": {
+        "bodog": {
+            "hockey": "https://sports.bodog.eu/hockey/nhl-playoffs",
+            "baseball": "https://sports.bodog.eu/baseball/mlb"
+        },
+        "Pinnacle": {
+            "hockey": "http://www.pinnaclesports.com/en/odds/match/hockey/usa/nhl-ot-included?sport=True",
+            "baseball": "http://www.pinnaclesports.com/en/odds/match/baseball/usa/mlb?sport=True"
+        }
+    },
+    "banned": [
+        "goes", "Today", "Runs", "Series"
+    ],
+    "to_strip": [
+        "G1 ", "G2 "
+    ],
+    "tablenames": {
+        "hockey":"HockeyNHL",
+        "baseball": "BaseballMLB"
+    },
+    "short_names": {
+        "baseball": {
+            "ARI" : [
+                "Arizona Diamondbacks", 
+                "Diamondbacks"
+            ], 
+            "ATL" : [
+                "Atlanta Braves", 
+                "Braves"
+            ], 
+            "BAL" : [
+                "Baltimore Orioles", 
+                "Orioles"
+            ], 
+            "BOS" : [
+                "Boston Red Sox",
+                "Red Sox"
+            ],
+            "CHC" : [
+                "Chicago Cubs",
+                "Cubs"
+            ], 
+            "CWS" : [
+                "Chicago White Sox",
+                "White Sox"
+            ], 
+            "CIN" : [
+                "Cincinnati Reds",
+                "Reds"
+            ], 
+            "CLE" : [
+                "Cleveland Indians",
+                "Indians"
+            ], 
+            "COL" : [
+                "Colorado Rockies",
+                "Rockies"
+            ], 
+            "DET" : [
+                "Detroit Tigers",
+                "Tigers"
+            ], 
+            "HOU" : [
+                "Houston Astros",
+                "Astros"
+            ], 
+            "KC" : [
+                "Kansas City Royals",
+                "KC Royals",
+                "K.C. Royals",
+                "Royals"
+            ], 
+            "LAA" : [
+                "Los Angeles Angels",
+                "LA Angels",
+                "LAA Angels",
+                "L.A. Angels",
+                "Angels"
+            ], 
+            "LAD" : [
+                "Los Angeles Dodgers",
+                "LA Dodgers",
+                "L.A. Dodgers",
+                "LAD Dodgers",
+                "Dodgers"
+            ], 
+            "MIA" : [
+                "Miami Marlins",
+                "Marlins"
+            ], 
+            "MIL" : [
+                "Milwaukee Brewers",
+                "Brewers"
+            ], 
+            "MIN" : [
+                "Minnesota Twins",
+                "Twins"
+            ], 
+            "NYM" : [
+                "New York Mets",
+                "NY Mets",
+                "N.Y. Mets",
+                "NYM Mets",
+                "Mets"
+            ], 
+            "NYY" : [
+                "New York Yankees",
+                "NY Yankees",
+                "N.Y. Yankees",
+                "NYY Yankees",
+                "Yankees"
+            ], 
+            "OAK" : [
+                "Oakland Athletics",
+                "Athletics"
+            ], 
+            "PHI" : [
+                "Philadelphia Phillies",
+                "Phillies"
+            ], 
+            "PIT" : [
+                "Pittsburgh Pirates", 
+                "Pirates"
+            ], 
+            "SD" : [
+                "San Diego Padres",
+                "Padres"
+            ], 
+            "SF" : [
+                "San Francisco Giants", 
+                "Giants"
+            ], 
+            "SEA" : [
+                "Seattle Mariners", 
+                "Mariners"
+            ], 
+            "STL" : [
+                "St Louis Cardinals", 
+                "St. Louis Cardinals",
+                "Cardinals"
+            ], 
+            "TB" : [
+                "Tampa Bay Rays", 
+                "T.B. Rays",
+                "TB Rays",
+                "Rays"
+            ], 
+            "TEX" : [
+                "Texas Rangers", 
+                "Rangers"
+            ], 
+            "TOR" : [
+                "Toronto Blue Jays", 
+                "Blue Jays"
+            ], 
+            "WAS" : [
+                "Washington Nationals", 
+                "Nationals"
+            ]
+        },
+        "hockey": {
+            "ANA" : [
+                "Anaheim Ducks", 
+                "Ducks"
+            ],
+            "ARI" : [
+                "Arizona Coyotes", 
+                "Coyotes"
+            ],
+            "BOS" : [
+                "Boston Bruins", 
+                "Bruins"
+            ],
+            "BUF" : [
+                "Buffalo Sabres", 
+                "Sabres"
+            ],
+            "CAR" : [
+                "Carolina Hurricanes", 
+                "Hurricanes"
+            ],
+            "CGY" : [
+                "Calgary Flames", 
+                "Flames"
+            ],
+            "CHI" : [
+                "Chicago Blackhawks", 
+                "Blackhawks"
+            ], 
+            "COL" : [
+                "Colorado Avalanche", 
+                "Avalanche"
+            ], 
+            "CBJ" : [
+                "Columbus Blue Jackets", 
+                "Blue Jackets"
+            ],
+            "DAL" : [
+                "Dallas Stars", 
+                "Stars"
+            ],
+            "DET" : [
+                "Detroit Red Wings", 
+                "Tigers"
+            ], 
+            "EDM" : [
+                "Edmonton Oilers", 
+                "Oilers"
+            ],
+            "FLA" : [
+                "Florida Panthers", 
+                "Red Wings"
+            ], 
+            "LA" : [
+                "Los Angeles Kings",
+                "LA Kings",
+                "L.A. Kings",
+                "Kings"
+            ], 
+            "MIN" : [
+                "Minnesota Wild", 
+                "Wild"
+            ], 
+            "NAS" : [
+                "Nashville Predators", 
+                "Predators"
+            ],
+            "NJ" : [
+                "New Jersey Devils", 
+                "NJ Devils",
+                "N.J. Devils",
+                "Devils"
+            ],
+            "NYI" : [
+                "New York Islanders", 
+                "NY Islanders",
+                "N.Y. Islanders",
+                "Islanders"
+            ], 
+            "NYR" : [
+                "New York Rangers", 
+                "NY Rangers",
+                "N.Y. Rangers",
+                "Rangers"
+            ],
+            "OTT" : [
+                "Ottawa Senators", 
+                "Senators"
+            ],
+            "PHI" : [
+                "Philadelphia Flyers", 
+                "Flyers"
+            ], 
+            "PIT" : [
+                "Pittsburgh Penguins", 
+                "Penguins"
+            ],
+            "SJ" : [
+                "San Jose Sharks", 
+                "Sharks"
+            ],
+            "STL" : [
+                "St. Louis Blues",
+                "St Louis Blues", 
+                "Blues"
+            ], 
+            "TB" : [
+                "Tampa Bay Lightning", 
+                "Lightning"
+            ], 
+            "TOR" : [
+                "Toronto Maple Leafs", 
+                "Maple Leafs"
+            ], 
+            "VAN" : [
+                "Vancouver Canucks",
+                "Canucks"
+            ],
+            "WAS" : [
+                "Washington Capitals",
+                "Capitals"
+            ],
+            "WPG" : [
+                "Winnipeg Jets",
+                "Jets"
+            ]
+        }
+    },
+    "sports_translations": {
+        "5Dimes": {
+            "hockey": "Hockey_NHL", 
+            "baseball": "Baseball_MLB",
+            "basketball": "Basketball_NBA"
+        },
+        "Pinnacle": {
+            "hockey": "NHL - OT Included",
+            "baseball": "USA - MLB"
+        }
+    }
+}
