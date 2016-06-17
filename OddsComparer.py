@@ -55,6 +55,7 @@ class OddsComparer():
                     """
 
                     game["poll_time"] = int(time.time())
+                    game["site"] = site
 
                     game_id = self.bets_DB.get_game_id(game)
                     self.bets_DB.add_moneyline(game,game_id)
