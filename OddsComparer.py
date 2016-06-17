@@ -1,5 +1,5 @@
 # from bs4 import BeautifulSoup
-import re, time, sys, datetime, math
+import re, time, sys, datetime, math, signal
 from config import CONFIG as config
 import HTML_parser
 import Emailer
