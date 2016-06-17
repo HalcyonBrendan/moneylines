@@ -76,12 +76,24 @@ class OddsComparer():
             print "sleeping {} seconds".format(time_to_sleep)
             self.countdown_sleep(time_to_sleep)
 
+            if interrupted:
+                try:
+                    self.bets_DB.shutdown()
+                    self.parser.shutdown()
+                except:
+                    pass
+
+                break
+
     def countdown_sleep(self, time_to_sleep):
         for i in range(time_to_sleep):
             sys.stdout.write('\r')
             sys.stdout.write(str(time_to_sleep - i))
             sys.stdout.flush()
             time.sleep(1) 
+
+            if interrupted:
+                break
 
     def compare_moneylines(self, game_id, game):
         # Look at current line
@@ -153,16 +165,18 @@ if __name__ == "__main__":
     odds = OddsComparer()
 
     def signal_handler(signal, frame):
-        # Be nice and let the ioloop know it's time to go
-    #    receiver.channel.basic_cancel()
-    #    receiver.connection.ioloop.stop()
-        self.parser.shutdown()
-        self.bets_DB.shutdown()
-        time.sleep(1)
-        print("Connections closed.  Cleaning up and exiting.")
+        try:
+            odd.bets_DB.shutdown()
+            odds.parser.shutdown()
+        except:
+            pass
+
+        global interrupted
+        interrupted = True
         
     signal.signal(signal.SIGINT, signal_handler)
-    signal.pause()
+
+    interrupted = False
 
     odds.run()
     # odds.add_moneylines_to_database()
