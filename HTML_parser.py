@@ -15,10 +15,10 @@ class HTML_parser():
 
 		self.betting_websites = config["bookies"]
 		self.sports = config["sports"]
-		self.display = Display(visible=0, size=(800, 600))
-		self.display.start()
+		# self.display = Display(visible=0, size=(800, 600))
+		# self.display.start()
 		# login to allow modification of roster
-		self.driver = webdriver.Firefox()
+		self.driver = webdriver.PhantomJS()
 		self.parsers = {}
 		self.load_parsers()
 		# for parser in self.parsers:
