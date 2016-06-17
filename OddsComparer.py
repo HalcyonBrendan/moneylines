@@ -49,20 +49,24 @@ class OddsComparer():
                         "away_line": away team's line,
                         "sport": name of the sport
                     }
+
+                    right now the below code just stores and compares lines
+                    using mysql
                     """
 
+                    game["poll_time"] = int(time.time())
 
-                    # if game["status"] == "upcoming":
-                    #     game_id = self.bets_DB.get_game_id(game)
-                    #     self.bets_DB.add_moneyline(game,game_id)
+                    game_id = self.bets_DB.get_game_id(game)
+                    self.bets_DB.add_moneyline(game,game_id)
 
-                    #     betting_result = self.compare_moneylines(game_id,game)
+                    betting_result = self.compare_moneylines(game_id,game)
 
-                    #     if betting_result:
-                    #         results.append(betting_result)
+                    if betting_result:
+                        results.append(betting_result)
 
-                    # else:
-                    #     self.bets_DB.delete_id(game)
+                    """
+                    end of area where you put your code
+                    """
 
             # if results:
             #     self.emailer.send_email(results)
