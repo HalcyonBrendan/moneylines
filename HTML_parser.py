@@ -41,19 +41,8 @@ class HTML_parser():
 
 		return moneylines
 
-	# def convert_line_to_int(self, line):
-	# 	if type(line) == unicode:
-	# 		line = line.encode('utf-8')
-	# 	elif type(line) != str:
-	# 		print "invalid type for conversion"
-	# 		return None
-
-	# 	if "+" in line:
-	# 		result = int(line[1:])
-	# 	else:
-	# 		result = int(line)
-
-	# 	return result
+	def shutdown(self):
+		self.driver.close()
 
 if __name__ == "__main__":
 	parser = HTML_parser()

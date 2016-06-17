@@ -190,3 +190,6 @@ VALUES ({0},\'{1}\',\'{2}\',\'{3}\',\'{4}\')""".format(new_id,game["home_team"],
                 game_id,game["sport"])      
             # print query_string
             self.cursor.execute(query_string)
+
+    def shutdown(self):
+        self.db.disconnect()

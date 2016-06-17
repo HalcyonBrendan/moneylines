@@ -151,6 +151,19 @@ class OddsComparer():
 
 if __name__ == "__main__":
     odds = OddsComparer()
+
+    def signal_handler(signal, frame):
+        # Be nice and let the ioloop know it's time to go
+    #    receiver.channel.basic_cancel()
+    #    receiver.connection.ioloop.stop()
+        self.parser.shutdown()
+        self.bets_DB.shutdown()
+        time.sleep(1)
+        print("Connections closed.  Cleaning up and exiting.")
+        
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.pause()
+
     odds.run()
     # odds.add_moneylines_to_database()
     # odds.flush_games()
